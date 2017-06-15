@@ -25,18 +25,18 @@ parser.add_argument('--mzz', dest='minzeroz', default=False, action='store_true'
 args = parser.parse_args()
 
 if not args.title:
-	args.title = args.filename
+  args.title = args.filename
 if not args.output:
-	args.output = 'OutputFigure.png'
+  args.output = 'OutputFigure.png'
 if not args.xlab:
-	args.xlab = ''
+  args.xlab = ''
 if not args.ylab:
-	args.ylab= ''
+  args.ylab= ''
 if not args.zlab:
-	args.zlab= ''
+  args.zlab= ''
 
 with open(args.filename) as fo:
-	text = fo.readlines()
+  text = fo.readlines()
 
 xlist = list()
 ylist = list()
@@ -46,28 +46,28 @@ if not args.alternate:
 
     for item in text:
         matches = re.findall('[-+]?[0-9]*\.?[0-9]+', item)
-        matches = map(float, matches)
+        matches = list(map(float, matches))
         if len(matches) > 0:
             pointset.add(tuple(matches))
 else:
     for rowa, rowb in zip(*[iter(text)]*2): # Pairs the rows
 
-        matches1 = map(float, re.findall('[-+]?[0-9]*\.?[0-9]+', rowa))
-        matches2 = map(float, re.findall('[-+]?[0-9]*\.?[0-9]+', rowb))
+        matches1 = list(map(float, re.findall('[-+]?[0-9]*\.?[0-9]+', rowa)))
+        matches2 = list(map(float, re.findall('[-+]?[0-9]*\.?[0-9]+', rowb)))
         if( (len(matches1) > 0) and (len(matches2) > 0)):
            pointset.add((matches1[0], matches2[0]))
 
 
 pointlist = list(pointset)
 if len(pointlist[0]) == 2:
-	ndim = 2
+  ndim = 2
 elif len(pointlist[1]) == 3:
-	ndim = 3
+  ndim = 3
 else:
-	raise "Error, unexpected number of columns (dimensions)"
+  raise "Error, unexpected number of columns (dimensions)"
 
-xlist = map(lambda x: x[0], pointlist)
-ylist = map(lambda y: y[1], pointlist)
+xlist = list(map(lambda x: x[0], pointlist))
+ylist = list(map(lambda y: y[1], pointlist))
 
 # This swaps the x and y data if the 'invert' flag was set
 if args.invert:
@@ -76,35 +76,35 @@ if args.invert:
         ylist = list(tmp)
 if args.fx:
     x_expr = eval('lambda x: ' + args.fx) #x_expr is now a lambda function
-    xlist = map(x_expr, xlist)
+    xlist = list(map(x_expr, xlist))
 
 if args.fy:
     y_expr = eval('lambda y: ' + args.fy) #y_expr is now a lambda function
-    ylist = map(y_expr, ylist)
+    ylist = list(map(y_expr, ylist))
 
 if args.minzerox:
-    xlist = map(lambda x: x - min(xlist), xlist)
+    xlist = list(map(lambda x: x - min(xlist), xlist))
 
 if args.minzeroy:
-    ylist = map(lambda y: y - min(ylist), ylist)
+    ylist = list(map(lambda y: y - min(ylist), ylist))
 
 
 if (ndim == 3):
-	zlist = map(lambda z: z[2], pointlist)
+  zlist = list(map(lambda z: z[2], pointlist))
 
-    	if args.fz:
-        	z_expr = eval('lambda z: ' + args.fz) #z_expr is now a lambda function
-    		zlist = map(z_expr, zlist)
-	if args.minzeroz:
-		zlist = map(lambda z: z - min(z), zlist)
-	fig = plt.figure()
-	ax3 = fig.add_subplot(111, projection='3d')
-	ax3.scatter(xlist, ylist, zlist)
+  if args.fz:
+    z_expr = eval('lambda z: ' + args.fz) #z_expr is now a lambda function
+    zlist = list(map(z_expr, zlist))
+  if args.minzeroz:
+    zlist = list(map(lambda z: z - min(z), zlist))
+  fig = plt.figure()
+  ax3 = fig.add_subplot(111, projection='3d')
+  ax3.scatter(xlist, ylist, zlist)
 else:
-	plt.scatter(xlist, ylist)
-    	axes = plt.gca()
-    	axes.set_xlim([min(xlist), max(xlist)])
-    	axes.set_ylim([min(ylist), max(ylist)])
+  plt.scatter(xlist, ylist)
+  axes = plt.gca()
+  axes.set_xlim([min(xlist), max(xlist)])
+  axes.set_ylim([min(ylist), max(ylist)])
 
 plt.xlabel(args.xlab)
 plt.ylabel(args.ylab)
@@ -112,4 +112,4 @@ plt.title(args.title)
 plt.savefig(args.output)
 
 if not args.silent:
-	plt.show()
+  plt.show()
