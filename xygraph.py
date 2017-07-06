@@ -45,15 +45,15 @@ pointset = set() # Accumulate in a set so that we discard duplicates
 if not args.alternate:
 
     for item in text:
-        matches = re.findall('[-+]?[0-9]*\.?[0-9]+', item)
+        matches = re.findall('[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?', item)
         matches = list(map(float, matches))
         if len(matches) > 0:
             pointset.add(tuple(matches))
 else:
     for rowa, rowb in zip(*[iter(text)]*2): # Pairs the rows
 
-        matches1 = list(map(float, re.findall('[-+]?[0-9]*\.?[0-9]+', rowa)))
-        matches2 = list(map(float, re.findall('[-+]?[0-9]*\.?[0-9]+', rowb)))
+        matches1 = list(map(float, re.findall('[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?', rowa)))
+        matches2 = list(map(float, re.findall('[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?', rowb)))
         if( (len(matches1) > 0) and (len(matches2) > 0)):
            pointset.add((matches1[0], matches2[0]))
 
